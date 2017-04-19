@@ -6,12 +6,39 @@
  *
  */
 import ChessBoard from 'chessboardjs';
-import Chess from 'chess.js';
+import Chess from '../lib/chess.js';
+import {alphaBetaSearch} from './ai';
+
 
 const initBoard = (boardID = 'board') => {
   let board;
   const game = new Chess();
 
+  const blackIsComp = () => {
+    return $('#black-player').find(':selected').attr('value') === '1';
+  }
+
+  const whiteIsComp = () => {
+    return  $('#white-player').find(':selected').attr('value') === '1';
+  }
+
+  const getBestMove = () => {
+    if (game.game_over()) {
+      alert('Game Over');
+    }
+
+    const depth = parseInt($('#search-depth').find(':selected').text(), 10);
+    const startTime = new Date().getTime();
+    const {move: bestMove, positionsGenerated} = alphaBetaSearch(game, depth);
+    const endTime = new Date().getTime();
+    const duration = endTime - startTime;
+    const positionRate = positionsGenerated * 1000 / duration;
+
+    $('#num-positions').text(positionsGenerated);
+    $('#move-time').text(duration);
+    $('#position-rate').text(positionRate);
+    return bestMove;
+  }
   /*
    * Start of board highlighting
    */
@@ -51,6 +78,11 @@ const initBoard = (boardID = 'board') => {
 
     // illegal move
     if (move === null) return 'snapback';
+
+    if ((game.turn() === 'w' && whiteIsComp()) || (game.turn() === 'b' && blackIsComp())) {
+      window.setTimeout(() => makeMove(getBestMove()), 250);
+    }
+
   };
 
   var onMouseoverSquare = function(square, piece) {
@@ -87,7 +119,7 @@ const initBoard = (boardID = 'board') => {
     return game.moves(...args);
   };
 
-  const move = (...args) => {
+  const makeMove = (...args) => {
     const m = game.move(...args);
     board.position(game.fen());
     return !!m;
@@ -106,7 +138,8 @@ const initBoard = (boardID = 'board') => {
     onSnapEnd: onSnapEnd,
   }
   board = ChessBoard(boardID, config);
-  return {game, board, moves, move}
+  
+  return {game, board, moves, move: makeMove}
 };
 
 export default initBoard;

@@ -13,39 +13,70 @@ const VALUE = {
  *   and black is always the minimizing player
  *
  */
-export const alphaBetaSearch = (GameState, depth) => {
-  const { game } = GameState;
-  
-  if(game.turn() === 'w') {
-    return maxValue(game, depth, -Infinity, Infinity);
+
+let positionsGenerated = 0;
+
+export const alphaBetaSearch = (game, depth) => {
+  let bestMoveFound;
+  const isMaximizingPlayer = game.turn() === 'w';
+  const possibleMoves = getMoveOrder(game);
+  positionsGenerated = 0;
+
+  if(isMaximizingPlayer) {
+    let bestMoveValue = -Infinity;
+    for (let i = 0; i < possibleMoves.length; i += 1) {
+      positionsGenerated += 1;
+      const nextMove = possibleMoves[i];
+      game.move(nextMove);
+      let v = minValue(game, depth - 1, -Infinity, Infinity);
+      game.undo();
+      if (v > bestMoveValue) {
+        bestMoveValue = v;
+        bestMoveFound = nextMove;
+      }
+    }
   } else {
-    return minValue(game, depth, -Infinity, Infinity);
+    let bestMoveValue = Infinity;
+    for (let i = 0; i < possibleMoves.length; i += 1) {
+      positionsGenerated += 1;
+      const nextMove = possibleMoves[i];
+      game.move(nextMove);
+      const v = maxValue(game, depth - 1, -Infinity, Infinity);
+      game.undo();
+      if (v < bestMoveValue) {
+        bestMoveValue = v;
+        bestMoveFound = nextMove;
+      }
+    }
   }
+  return {move: bestMoveFound, positionsGenerated};
 }
 
 const maxValue = (game, depth, alpha, beta) => {
   if (cutoffTest(game, depth)) return evaluateState(game);
-  let bestValue = {value: -Infinity, line: []};
+  let bestValue = -Infinity;
   const possibleMoves = getMoveOrder(game);
   for(let i = 0; i < possibleMoves.length; i += 1) {
+    positionsGenerated += 1;
     game.move(possibleMoves[i]);
     const nextMin = minValue(game, depth - 1, alpha, beta)
-    bestValue = bestValue.value > nextMin.value ? bestValue : nextMin;
+    bestValue = Math.max(bestValue, nextMin); //.value > nextMin.value ? bestValue : nextMin;
     game.undo();
     if (bestValue.value >= beta) return bestValue;
-    alpha = alpha > bestValue.value ? alpha : bestValue.value;
+    alpha = Math.max(alpha, bestValue); //alpha > bestValue.value ? alpha : bestValue.value;
   }
   return bestValue;
 }
 
 const minValue = (game, depth, alpha, beta) => {
   if (cutoffTest(game, depth)) return evaluateState(game);
-  let bestValue = {value: Infinity, line: []};
+  let bestValue = Infinity;
   const possibleMoves = getMoveOrder(game);
   for(let i = 0; i < possibleMoves.length; i += 1) {
+    positionsGenerated += 1;
     game.move(possibleMoves[i]);
     const nextMax = maxValue(game, depth - 1, alpha, beta);
-    bestValue = bestValue.value < nextMax.value ? bestValue : nextMax;
+    bestValue = Math.min(bestValue, nextMax); //bestValue.value < nextMax.value ? bestValue : nextMax;
     game.undo();
     if (bestValue <= alpha) return bestValue;
     beta = Math.min(beta, bestValue);
@@ -59,28 +90,12 @@ const cutoffTest = (game, depth) => {
 }
 
 const evaluateState = (game) => {
-  return {value: countMaterial(game.board()), line: game.history()};
+  return countMaterial(game.board());
 }
 
 const getMoveOrder = (game) => {
   return game.moves();
 }
-
-export const calculateBestMove = (Game) => {
-  const { game } = Game;
-  const possibleMoves = game.moves();
-  const turn = game.turn() === 'w' ? 1 : -1;
-  let bestValue = -1 * turn * 1000000;
-
-  possibleMoves.forEach(move => {
-    game.move(move);
-    const boardValue = countMaterial(game.board())
-    bestValue = Math.max(bestValue, boardValue);
-    game.undo();
-  })
-  debugger;
-  return bestValue;
-};
 
 export const countMaterial = (board) => {
   const value = board.reduce((acc, val, index, array) => {

@@ -8,9 +8,44 @@
     <title>Database Visualizer</title>
   </head>
   <body>
-      <p>HI</p>
-      <div id="chart"></div>
       <div id="board" style="width: 400px"></div>
+      <div id="info">
+        <div class="depth">
+          Search depth:
+          <select id="search-depth">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <div class="players">
+          <div class="white-player">
+            White:
+            <select id="white-player">
+              <option value="0" selected>Human</option>
+              <option value="1">Computer</option>
+            </select>
+            <br/>
+            Black:
+            <select id="black-player">
+              <option value="0">Human</option>
+              <option value="1" selected>Computer</option>
+            </select>
+          </div>
+        </div>
+        <div class="stats">
+          Positions generated:
+          <span id="num-positions"></span>
+          <br/>
+          Time:
+          <span id="move-time"></span>
+          <br/>
+          Positions per second:
+          <span id="position-rate"></span>
+        </div>
+      </div>
   </body>
   <script src="main.js"></script>
 </html>
