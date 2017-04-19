@@ -12,7 +12,7 @@ import {alphaBetaSearch} from './ai';
 
 const initBoard = (boardID = 'board') => {
   let board;
-  const game = new Chess();
+  let game;
 
   const blackIsComp = () => {
     return $('#black-player').find(':selected').attr('value') === '1';
@@ -25,18 +25,24 @@ const initBoard = (boardID = 'board') => {
   const getBestMove = () => {
     if (game.game_over()) {
       alert('Game Over');
+      startGame();
     }
 
     const depth = parseInt($('#search-depth').find(':selected').text(), 10);
     const startTime = new Date().getTime();
-    const {move: bestMove, positionsGenerated} = alphaBetaSearch(game, depth);
+    const {move: bestMove, positionsGenerated, bestAtDepth} = alphaBetaSearch(game, depth);
     const endTime = new Date().getTime();
     const duration = endTime - startTime;
     const positionRate = positionsGenerated * 1000 / duration;
 
     $('#num-positions').text(positionsGenerated);
-    $('#move-time').text(duration);
+    $('#move-time').text(duration/1000);
     $('#position-rate').text(positionRate);
+
+    if ((game.turn() === 'b' && whiteIsComp()) || (game.turn() === 'w' && blackIsComp())) {
+      window.setTimeout(() => makeMove(getBestMove()), 250);
+    }
+
     return bestMove;
   }
   /*
@@ -82,7 +88,6 @@ const initBoard = (boardID = 'board') => {
     if ((game.turn() === 'w' && whiteIsComp()) || (game.turn() === 'b' && blackIsComp())) {
       window.setTimeout(() => makeMove(getBestMove()), 250);
     }
-
   };
 
   var onMouseoverSquare = function(square, piece) {
@@ -120,25 +125,47 @@ const initBoard = (boardID = 'board') => {
   };
 
   const makeMove = (...args) => {
-    const m = game.move(...args);
+    let m = game.ugly_move(...args);
+    if (m === null) {
+      m = game.move(...args);
+    }
     board.position(game.fen());
+    if (game.game_over()) {
+      alert('Game Over');
+      startGame();
+    }
     return !!m;
   };
 
-  const config = {
-    draggable: true,
-    position: 'start',
-    moveSpeed: 'slow',
-    snapbackSpeed: 500,
-    snapSpeed: 100,
-    onDragStart: onDragStart,
-    onDrop: onDrop,
-    onMouseoutSquare: onMouseoutSquare,
-    onMouseoverSquare: onMouseoverSquare,
-    onSnapEnd: onSnapEnd,
+  const undoMove = () => {
+    game.undo()
+    board.position(game.fen());
   }
-  board = ChessBoard(boardID, config);
-  
+
+  const startGame = () => {
+    game = new Chess();
+    const config = {
+      draggable: true,
+      position: 'start',
+      moveSpeed: 'fast',
+      snapbackSpeed: 500,
+      snapSpeed: 100,
+      onDragStart: onDragStart,
+      onDrop: onDrop,
+      onMouseoutSquare: onMouseoutSquare,
+      onMouseoverSquare: onMouseoverSquare,
+      onSnapEnd: onSnapEnd,
+    }
+    board = ChessBoard(boardID, config);
+    if(game.turn() === 'w' && whiteIsComp()) {
+      setTimeout(() => makeMove(getBestMove()), 250);
+    }
+  };
+
+  startGame();
+  $('#undo-button').on('click', undoMove);
+  $('#move-button').on('click', () => makeMove(getBestMove()));
+
   return {game, board, moves, move: makeMove}
 };
 

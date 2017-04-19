@@ -18,6 +18,10 @@ module.exports = {
             {
                 from: './src/style.css',
                 to: './dist/style.css',
+            },
+            {
+              from: './lib/jquery-3.2.1.min.js',
+              to: './dist/jquery-3.2.1.min.js',
             }]),
         new webpack.optimize.UglifyJsPlugin({
             compress: {
