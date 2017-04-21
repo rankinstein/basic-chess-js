@@ -72,7 +72,6 @@ const maxValue = (game, depth, a, b) => {
       a = bestValue;
       setTransposition(game, alpha, beta);
     }
-    // alpha = Math.max(alpha, bestValue);
   }
   return bestValue;
 }
@@ -95,7 +94,6 @@ const minValue = (game, depth, a, b) => {
       b = bestValue;
       setTransposition(game, alpha, beta);
     }
-    // beta = Math.min(beta, bestValue);
   }
   return bestValue;
 }
@@ -120,8 +118,13 @@ const checkTranspositions = (game, alpha, beta) => {
 }
 
 const setTransposition = (game, alpha, beta) => {
-  if(isFinite(alpha) || isFinite(beta))
-  Transpositions[getPosition(game)] = {alpha, beta};
+  const trans = Transpositions[getPosition(game)];
+  if (trans) {
+    Transpositions[getPosition(game)] = {alpha: Math.max(alpha, trans.alpha),
+                                         beta: Math.min(beta, trans.beta)};
+  } else {
+    Transpositions[getPosition(game)] = {alpha, beta}
+  }
 }
 
 const getMoveOrder = (game) => {

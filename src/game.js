@@ -54,7 +54,7 @@ const initBoard = (boardID = 'board') => {
     if(aiValue === 3) {
       return alphaBetaOrdering(game, depth);
     }
-    return alphaBetaSearch(game, depth);
+    return alphaBetaIDS(game, depth);
   }
 
   const moveSearch = (game, depth) => {
@@ -107,6 +107,23 @@ const initBoard = (boardID = 'board') => {
     }
   }
 
+  const resetStats = () => {
+    $('#white-num-positions').text(0);
+    $('#white-move-time').text(0);
+    $('#white-position-rate').text(0);
+    $('#white-total-positions').text(0);
+    $('#white-total-duration').text(0);
+    $('#white-avg-positions').text(0);
+    $('#white-avg-duration').text(0);
+    $('#black-num-positions').text(0);
+    $('#black-move-time').text(0);
+    $('#black-position-rate').text(0);
+    $('#black-total-positions').text(0);
+    $('#black-total-duration').text(0);
+    $('#black-avg-positions').text(0);
+    $('#black-avg-duration').text(0);
+  }
+
   /*
    * Start of board highlighting
    */
@@ -148,7 +165,7 @@ const initBoard = (boardID = 'board') => {
     if (move === null) return 'snapback';
 
     if ((game.turn() === 'w' && whiteIsComp()) || (game.turn() === 'b' && blackIsComp())) {
-      window.setTimeout(() => makeMove(getBestMove()), 250);
+      window.setTimeout(() => makeMove(getBestMove()), 350);
     }
   };
 
@@ -198,9 +215,10 @@ const initBoard = (boardID = 'board') => {
 
   const checkGameOver = () => {
     if (game.game_over()) {
-      alert('Game Over');
-      debugger;
-      startGame();
+      const isDraw = game.in_draw();
+      const whoWon = game.turn() === 'w' ? 'White wins.' : 'Black wins.';
+      alert(`Game Over. ${ isDraw ? 'Draw.' : whoWon}`);
+      setTimeout(() => startGame(), 1000);
     }
   }
 
@@ -229,14 +247,13 @@ const initBoard = (boardID = 'board') => {
       onSnapEnd: onSnapEnd,
     }
     board = ChessBoard(boardID, config);
-    if(game.turn() === 'w' && whiteIsComp()) {
-      setTimeout(() => makeMove(getBestMove()), 250);
-    }
+    resetStats();
   };
 
   startGame();
   $('#undo-button').on('click', undoMove);
   $('#move-button').on('click', () => makeMove(getBestMove()));
+  $('#reset-button').on('click', () => startGame());
 
   return {game, board, moves, move: makeMove}
 };
