@@ -15,44 +15,41 @@ const VALUE = {
  */
 
 let positionsGenerated = 0;
-let bestAtDepth = [];
 
-export const alphaBetaSearch = (game, maxDepth) => {
+export const alphaBetaSearch = (game, depth) => {
   let bestMoveFound;
   const isMaximizingPlayer = game.turn() === 'w';
   const possibleMoves = getMoveOrder(game);
   positionsGenerated = 0;
 
-  for(let depth = 1; depth <= maxDepth; depth++) {
-    if(isMaximizingPlayer) {
-      let bestMoveValue = -Infinity;
-      for (let i = 0; i < possibleMoves.length; i += 1) {
-        positionsGenerated += 1;
-        const nextMove = possibleMoves[i];
-        game.ugly_move(nextMove);
-        let v = minValue(game, depth - 1, -Infinity, Infinity);
-        game.undo();
-        if (v > bestMoveValue) {
-          bestMoveValue = v;
-          bestMoveFound = nextMove;
-        }
+  if(isMaximizingPlayer) {
+    let bestMoveValue = -Infinity;
+    for (let i = 0; i < possibleMoves.length; i += 1) {
+      positionsGenerated += 1;
+      const nextMove = possibleMoves[i];
+      game.ugly_move(nextMove);
+      let v = minValue(game, depth - 1, -Infinity, Infinity);
+      game.undo();
+      if (v > bestMoveValue) {
+        bestMoveValue = v;
+        bestMoveFound = nextMove;
       }
-    } else {
-      let bestMoveValue = Infinity;
-      for (let i = 0; i < possibleMoves.length; i += 1) {
-        positionsGenerated += 1;
-        const nextMove = possibleMoves[i];
-        game.ugly_move(nextMove);
-        const v = maxValue(game, depth - 1, -Infinity, Infinity);
-        game.undo();
-        if (v < bestMoveValue) {
-          bestMoveValue = v;
-          bestMoveFound = nextMove;
-        }
+    }
+  } else {
+    let bestMoveValue = Infinity;
+    for (let i = 0; i < possibleMoves.length; i += 1) {
+      positionsGenerated += 1;
+      const nextMove = possibleMoves[i];
+      game.ugly_move(nextMove);
+      const v = maxValue(game, depth - 1, -Infinity, Infinity);
+      game.undo();
+      if (v < bestMoveValue) {
+        bestMoveValue = v;
+        bestMoveFound = nextMove;
       }
     }
   }
-  return {move: bestMoveFound, positionsGenerated, bestAtDepth};
+  return {move: bestMoveFound, positionsGenerated};
 }
 
 const maxValue = (game, depth, alpha, beta) => {
@@ -101,13 +98,7 @@ const evaluateState = (game) => {
 }
 
 const getMoveOrder = (game) => {
-  const moves = game.ugly_moves().sort((a, b) => {
-    const best = bestAtDepth[bestAtDepth.length - 1];
-    if(best && a.from === best.from && a.to === best.to) return -1;
-    if(best && b.from === best.from && b.to === best.to) return 1;
-    return a.flags === 2 && b.flags !== 2 ? -1 : 1;
-  });
-  return moves;
+  return game.ugly_moves();
 }
 
 export const countMaterial = (board) => {

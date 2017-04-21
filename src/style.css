@@ -1,0 +1,43 @@
+.black, .white {
+  padding: 0 1rem;
+  width: 50%;
+  float: left;
+}
+
+.controls {
+  padding-top: 1rem;
+}
+
+.page {
+  background-color: seashell;
+  margin: auto;
+  margin-top: 1rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  width: 40rem;
+  font-size: 1.4rem;
+}
+
+html, body {
+  font-size: 10px;
+  height: 100%;
+  font-family: sans-serif;
+  margin: 0px;
+  padding: 0px;
+}
+
+.container {
+  width: 100%;
+}
+
+.center {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+h3 {
+  margin-bottom: 0rem;
+}

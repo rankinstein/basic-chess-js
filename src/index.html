@@ -8,48 +8,115 @@
     <title>Database Visualizer</title>
   </head>
   <body>
-      <div id="board" style="width: 400px"></div>
-      <div id="info">
-        <div class="depth">
-          Search depth:
-          <select id="search-depth">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3" selected>3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
-        </div>
-        <div class="players">
-          <div class="white-player">
-            White:
-            <select id="white-player">
-              <option value="0" selected>Human</option>
-              <option value="1">Computer</option>
-            </select>
-            <br/>
-            Black:
-            <select id="black-player">
-              <option value="0">Human</option>
-              <option value="1" selected>Computer</option>
-            </select>
+    <div class="page">
+    <div class="container">
+      <div class="board center">
+        <div>
+          <div id="board" style="width: 400px"></div>
+          <div class="controls center">
+            <button id="undo-button" type="button">Undo</button>
+            <button id="move-button" type="button">Make move</button>
           </div>
         </div>
-        <div class="controls">
-          <button id="undo-button" type="button">Undo</button>
-          <button id="move-button" type="button">Make move</button>
-        </div
-        <div class="stats">
-          Positions generated:
-          <span id="num-positions"></span>
-          <br/>
-          Time:
-          <span id="move-time"></span>
-          <br/>
-          Positions per second:
-          <span id="position-rate"></span>
+      </div>
+        <div class="center">
+          <div class="split-display center">
+            <div class="white">
+              <h3>White:</h3>
+              <div id="info">
+                <div class="white-player">
+                  <select id="white-player">
+                    <option value="0" selected>Human</option>
+                    <option value="1">Minimax</option>
+                    <option value="2">Alpha-beta (no optimizations)</option>
+                    <option value="3">Alpha-beta (captures first)</option>
+                    <option value="4">Alpha-beta (transposition table)</option>
+                  </select>
+                </div>
+                <div class="depth">
+                  Search depth:
+                  <select id="white-search-depth">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                </div>
+              </div>
+              <div class="stats">
+                Positions generated:
+                <span id="white-num-positions"></span>
+                <br/>
+                Time:
+                <span id="white-move-time"></span>
+                <br/>
+                Positions per second:
+                <span id="white-position-rate"></span>
+                <br/>
+                Total positions:
+                <span id="white-total-positions"></span>
+                <br/>
+                Total duration:
+                <span id="white-total-duration"></span>
+                <br/>
+                Avg. positions per turn:
+                <span id="white-avg-positions"></span>
+                <br/>
+                Avg. time per turn:
+                <span id="white-avg-duration"></span>
+              </div>
+            </div>
+            <div class="black">
+              <h3>Black:</h3>
+              <div id="info">
+                <div class="black-player">
+                  <select id="black-player">
+                    <option value="0">Human</option>
+                    <option value="1" selected>Minimax</option>
+                    <option value="2">Alpha-beta (no optimizations)</option>
+                    <option value="3">Alpha-beta (captures first)</option>
+                    <option value="4">Alpha-beta (transposition table)</option>
+                  </select>
+                </div>
+                <div class="depth">
+                  Search depth:
+                  <select id="black-search-depth">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                </div>
+              </div>
+              <div class="stats">
+                Positions generated:
+                <span id="black-num-positions"></span>
+                <br/>
+                Time:
+                <span id="black-move-time"></span>
+                <br/>
+                Positions per second:
+                <span id="black-position-rate"></span>
+                <br/>
+                Total positions:
+                <span id="black-total-positions"></span>
+                <br/>
+                Total duration:
+                <span id="black-total-duration"></span>
+                <br/>
+                Avg. positions per turn:
+                <span id="black-avg-positions"></span>
+                <br/>
+                Avg. time per turn:
+                <span id="black-avg-duration"></span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
   </body>
   <script src="main.js"></script>
 </html>
