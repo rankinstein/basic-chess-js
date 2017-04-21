@@ -8,6 +8,7 @@
 * Introduction
 Chess is an interesting programming problem because its complexity. There are approximately 10^120 different positions which is far greater than the number of atoms in the universe (~10^80). People have been theorizing and developing chess AI's since the dawn of computers [1].
 
+#+LATEX: \vspace{2.5mm}
 The focus of this project is not to build the strongest AI but rather one that is intelligent and responds quickly. This project is an examination of the minimax algorithm, alpha-beta pruning, and how simple heuristics and board evaluation procedures can produce a chess AI which is able to challenge casual chess players.
 
 * Technology
@@ -31,7 +32,6 @@ All algorithms evaluate the board in the same way. By calculating the material v
 * Results
 Due to time constraints it is difficult to quantify the differences between the four searches implemented. Ideally the algorithms would be evaluated over hundreds or thousands of iterations but each game takes at least 3 minutes to complete.
 
-#+CAPTION: Approximate performance of the four move search algorithms
 | Algorithm                 | Search Depth | Avg. positions per turn | Avg. time |
 |---------------------------+--------------+-------------------------+-----------|
 | Minimax                   |            3 |                    8000 |         1 |
@@ -42,8 +42,10 @@ Due to time constraints it is difficult to quantify the differences between the 
 |                           |            4 |                   45000 |         7 |
 | Alpha-beta transposition  |            3 |                    4000 |         1 |
 |                           |            4 |                   15000 |         4 |
+#+CAPTION: Approximate performance of the four move search algorithms
 These statistics were gathered from a single game where both AI's were the same. The values were an approximate average of their average positions per turn and time to generate a move. These are not statistically significant but it does highlight the basic performance differences between the algorithms.
 
+#+LATEX: \vspace{2.5mm}
 There is a trade-off between the number of positions that can be calculated per second and the complexity of the evaluation and heuristic. For smaller depth searches the benefits of pruning are not fully realized. There is also no benefit gained by iterative deepening at small search depths but the benefits are significant even at a search depth of 4. When run test against each other there were a large number of drawn games where sides would repeat the same move until the game was over.
 
 * Conclusion
@@ -52,19 +54,33 @@ The transposition table algorithm is buggy and occasionally makes sub-optimal mo
 * References
 [1]"chessprogramming - Alan Turing", Chessprogramming.wikispaces.com, 2017. [Online]. Available: https://chessprogramming.wikispaces.com/Alan+Turing. [Accessed: 21- Apr- 2017].
 
-[2]L. Hartikka, "A step-by-step guide to building a simple chess AI – freeCodeCamp", freeCodeCamp, 2017. [Online]. Available: https://medium.freecodecamp.com/simple-chess-ai-step-by-step-1d55a9266977. [Accessed: 21- Apr- 2017].
+#+LATEX: \vspace{2.5mm}
+[2]L. Hartikka, "A step-by-step guide to building a simple chess AI – freeCodeCamp", freeCodeCamp, 2017.[Online]. Available:
 
+=https://medium.freecodecamp.com/simple-chess-ai-step-by-step-1d55a9266977=. [Accessed: 21- Apr- 2017].
+
+#+LATEX: \vspace{2.5mm}
 [3]2017. [Online]. Available: https://github.com/lhartikk/simple-chess-ai/blob/master/. [Accessed: 21- Apr- 2017].
 
+#+LATEX: \vspace{2.5mm}
 [4]"chessboard.js » Examples", Chessboardjs.com, 2017. [Online]. Available: http://chessboardjs.com/examples#5003. [Accessed: 21- Apr- 2017].
 
+#+LATEX: \vspace{2.5mm}
 [5]S. Russell and P. Norving, Artificial intelligence, 3rd ed. New Jersey: Pearson, 2010.
 
+#+LATEX: \vspace{2.5mm}
 [6]"chessprogramming - Point Value", Chessprogramming.wikispaces.com, 2017. [Online]. Available: https://chessprogramming.wikispaces.com/Point+Value. [Accessed: 21- Apr- 2017].
 
-[7]F. Laramée, L. Crazy and L. Crazy, "Chess Programming Part IV: Basic Search - Artificial Intelligence - Articles - Articles - GameDev.net", Gamedev.net, 2017. [Online]. Available: https://www.gamedev.net/resources/_/technical/artificial-intelligence/chess-programming-part-iv-basic-search-r1171. [Accessed: 21- Apr- 2017].
+#+LATEX: \vspace{2.5mm}
+[7]F. Laramée, L. Crazy and L. Crazy, "Chess Programming Part IV: Basic Search - Artificial Intelligence - Articles - Articles - GameDev.net", Gamedev.net, 2017. [Online]. Available: 
 
+=https://www.gamedev.net/resources/_/technical/artificial-intelligence/chess-=
+
+=programming-part-iv-basic-search-r1171=. Accessed: 21- Apr- 2017].
+
+#+LATEX: \vspace{2.5mm}
 [8]"chessprogramming - Simplified evaluation function", Chessprogramming.wikispaces.com, 2017. [Online]. Available: https://chessprogramming.wikispaces.com/Simplified+evaluation+function. [Accessed: 21- Apr- 2017].
 
+#+LATEX: \vspace{2.5mm}
 [9]"Aske Plaat: MTD(f), a new chess algorithm", People.csail.mit.edu, 2017. [Online]. Available: http://people.csail.mit.edu/plaat/mtdf.html#abmem. [Accessed: 21- Apr- 2017].
 
