@@ -4,7 +4,7 @@
  *   and black is always the minimizing player
  *
  */
-import { countMaterial } from './board-eval';
+import { countMaterial } from './board-eval.js';
 
 let positionsGenerated = 0;
 let Transpositions = {};

@@ -1,6 +1,6 @@
-import Game from './game';
+import initBoard from './game.js';
 
-const game = Game();
+initBoard();
 
 
 

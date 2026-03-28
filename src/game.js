@@ -1,17 +1,16 @@
 /*
  *
- * Board highlighing is copied from Chessboard.js
- * Example # 5003
- * http://chessboardjs.com/examples#5003
+ * Board highlighting adapted from Chessboard.js Example #5003
+ * Modernized to use chessboard2 (no jQuery dependency)
  *
  */
-import ChessBoard from 'chessboardjs';
 import Chess from '../lib/chess.js';
-import {alphaBetaSearch as alphaBetaIDS} from './alphabeta-ids';
-import {alphaBetaSearch as alphaBetaOrdering} from './alphabeta-ordering';
-import {alphaBetaSearch} from './alphabeta-direct';
-import {minimaxSearch} from './minimax';
+import {alphaBetaSearch as alphaBetaIDS} from './alphabeta-ids.js';
+import {alphaBetaSearch as alphaBetaOrdering} from './alphabeta-ordering.js';
+import {alphaBetaSearch} from './alphabeta-direct.js';
+import {minimaxSearch} from './minimax.js';
 
+const $ = (id) => document.getElementById(id);
 
 const initBoard = (boardID = 'board') => {
   let board;
@@ -20,13 +19,14 @@ const initBoard = (boardID = 'board') => {
   let totalWhiteDuration;
   let totalBlackPositions;
   let totalBlackDuration;
+  let highlightedSquares = [];
 
   const blackIsComp = () => {
-    return $('#black-player').find(':selected').attr('value') !== '0';
+    return $('black-player').value !== '0';
   }
 
   const blackSearch = (game, depth) => {
-    const aiValue = parseInt($('#black-player').find(':selected').attr('value'));
+    const aiValue = parseInt($('black-player').value);
     if(aiValue === 1) {
       return minimaxSearch(game, depth);
     }
@@ -40,11 +40,11 @@ const initBoard = (boardID = 'board') => {
   }
 
   const whiteIsComp = () => {
-    return  $('#white-player').find(':selected').attr('value') !== '0';
+    return $('white-player').value !== '0';
   }
 
   const whiteSearch = (game, depth) => {
-    const aiValue = parseInt($('#white-player').find(':selected').attr('value'));
+    const aiValue = parseInt($('white-player').value);
     if(aiValue === 1) {
       return minimaxSearch(game, depth);
     }
@@ -65,7 +65,7 @@ const initBoard = (boardID = 'board') => {
   const getBestMove = () => {
     checkGameOver();
 
-    const depth = game.turn() === 'w' ? parseInt($('#white-search-depth').find(':selected').text(), 10) : parseInt($('#black-search-depth').find(':selected').text(), 10);
+    const depth = game.turn() === 'w' ? parseInt($('white-search-depth').value, 10) : parseInt($('black-search-depth').value, 10);
     const startTime = new Date().getTime();
     const {move: bestMove, positionsGenerated} = moveSearch(game, depth);
     const endTime = new Date().getTime();
@@ -82,82 +82,75 @@ const initBoard = (boardID = 'board') => {
     return bestMove;
   }
 
+  const setText = (id, value) => {
+    $(id).textContent = value;
+  };
+
   const updateStats = (turn, positions, duration, whiteTurns, blackTurns) => {
     if(turn === 'w'){
       totalWhiteDuration += duration;
       totalWhitePositions += positions;
-      $('#white-num-positions').text(positions);
-      $('#white-move-time').text(duration/1000);
-      $('#white-position-rate').text(Math.floor(positions * 1000 / duration));
-      $('#white-total-positions').text(totalWhitePositions);
-      $('#white-total-duration').text(totalWhiteDuration/1000);
-      $('#white-avg-positions').text(Math.round(totalWhitePositions/whiteTurns));
-      $('#white-avg-duration').text((totalWhiteDuration / (1000 * whiteTurns)).toFixed(3));
+      setText('white-num-positions', positions);
+      setText('white-move-time', duration/1000);
+      setText('white-position-rate', Math.floor(positions * 1000 / duration));
+      setText('white-total-positions', totalWhitePositions);
+      setText('white-total-duration', totalWhiteDuration/1000);
+      setText('white-avg-positions', Math.round(totalWhitePositions/whiteTurns));
+      setText('white-avg-duration', (totalWhiteDuration / (1000 * whiteTurns)).toFixed(3));
     }
     else {
       totalBlackDuration += duration;
       totalBlackPositions += positions;
-      $('#black-num-positions').text(positions);
-      $('#black-move-time').text(duration/1000);
-      $('#black-position-rate').text(Math.floor(positions * 1000 / duration));
-      $('#black-total-positions').text(totalBlackPositions);
-      $('#black-total-duration').text(totalBlackDuration/1000);
-      $('#black-avg-positions').text(Math.round(totalBlackPositions/blackTurns));
-      $('#black-avg-duration').text((totalBlackDuration / (1000 * blackTurns)).toFixed(3));
+      setText('black-num-positions', positions);
+      setText('black-move-time', duration/1000);
+      setText('black-position-rate', Math.floor(positions * 1000 / duration));
+      setText('black-total-positions', totalBlackPositions);
+      setText('black-total-duration', totalBlackDuration/1000);
+      setText('black-avg-positions', Math.round(totalBlackPositions/blackTurns));
+      setText('black-avg-duration', (totalBlackDuration / (1000 * blackTurns)).toFixed(3));
     }
   }
 
   const resetStats = () => {
-    $('#white-num-positions').text(0);
-    $('#white-move-time').text(0);
-    $('#white-position-rate').text(0);
-    $('#white-total-positions').text(0);
-    $('#white-total-duration').text(0);
-    $('#white-avg-positions').text(0);
-    $('#white-avg-duration').text(0);
-    $('#black-num-positions').text(0);
-    $('#black-move-time').text(0);
-    $('#black-position-rate').text(0);
-    $('#black-total-positions').text(0);
-    $('#black-total-duration').text(0);
-    $('#black-avg-positions').text(0);
-    $('#black-avg-duration').text(0);
+    const ids = [
+      'white-num-positions', 'white-move-time', 'white-position-rate',
+      'white-total-positions', 'white-total-duration', 'white-avg-positions', 'white-avg-duration',
+      'black-num-positions', 'black-move-time', 'black-position-rate',
+      'black-total-positions', 'black-total-duration', 'black-avg-positions', 'black-avg-duration',
+    ];
+    ids.forEach(id => setText(id, 0));
   }
 
   /*
-   * Start of board highlighting
+   * Board highlighting
    */
-  var removeGreySquares = function() {
-    $('#board .square-55d63').css('background', '');
+  const removeHighlights = () => {
+    highlightedSquares.forEach(sq => board.removeCircle(sq));
+    highlightedSquares = [];
   };
 
-  var greySquare = function(square) {
-    var squareEl = $('#board .square-' + square);
-    var background = '#a9a9a9';
-    if (squareEl.hasClass('black-3c85d') === true) {
-      background = '#696969';
-    }
-
-    squareEl.css('background', background);
+  const highlightSquare = (square) => {
+    board.addCircle(square);
+    highlightedSquares.push(square);
   };
 
-  var onDragStart = function(source, piece) {
+  const onDragStart = (evt) => {
     // do not pick up pieces if the game is over
     // or if it's not that side's turn
     if (game.game_over() === true ||
-        (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-        (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+        (game.turn() === 'w' && evt.piece.search(/^b/) !== -1) ||
+        (game.turn() === 'b' && evt.piece.search(/^w/) !== -1)) {
       return false;
     }
   };
 
-  var onDrop = function(source, target) {
-    removeGreySquares();
+  const onDrop = (evt) => {
+    removeHighlights();
 
     // see if the move is legal
     var move = game.move({
-      from: source,
-      to: target,
+      from: evt.source,
+      to: evt.target,
       promotion: 'q' // NOTE: always promote to a queen for example simplicity
     });
 
@@ -169,10 +162,10 @@ const initBoard = (boardID = 'board') => {
     }
   };
 
-  var onMouseoverSquare = function(square, piece) {
+  const onMouseenterSquare = (evt) => {
     // get list of possible moves for this square
     var moves = game.moves({
-      square: square,
+      square: evt.square,
       verbose: true
     });
 
@@ -180,24 +173,21 @@ const initBoard = (boardID = 'board') => {
     if (moves.length === 0) return;
 
     // highlight the square they moused over
-    greySquare(square);
+    highlightSquare(evt.square);
 
     // highlight the possible squares for this piece
     for (var i = 0; i < moves.length; i++) {
-      greySquare(moves[i].to);
+      highlightSquare(moves[i].to);
     }
   };
 
-  var onMouseoutSquare = function(square, piece) {
-    removeGreySquares();
+  const onMouseleaveSquare = () => {
+    removeHighlights();
   };
 
-  var onSnapEnd = function() {
+  const onSnapEnd = () => {
     board.position(game.fen());
   };
-  /*
-   * End of board highlighting
-   */
 
   const moves = (...args) => {
     return game.moves(...args);
@@ -242,18 +232,18 @@ const initBoard = (boardID = 'board') => {
       snapSpeed: 100,
       onDragStart: onDragStart,
       onDrop: onDrop,
-      onMouseoutSquare: onMouseoutSquare,
-      onMouseoverSquare: onMouseoverSquare,
+      onMouseleaveSquare: onMouseleaveSquare,
+      onMouseenterSquare: onMouseenterSquare,
       onSnapEnd: onSnapEnd,
     }
-    board = ChessBoard(boardID, config);
+    board = window.Chessboard2(boardID, config);
     resetStats();
   };
 
   startGame();
-  $('#undo-button').on('click', undoMove);
-  $('#move-button').on('click', () => makeMove(getBestMove()));
-  $('#reset-button').on('click', () => startGame());
+  $('undo-button').addEventListener('click', undoMove);
+  $('move-button').addEventListener('click', () => makeMove(getBestMove()));
+  $('reset-button').addEventListener('click', () => startGame());
 
   return {game, board, moves, move: makeMove}
 };
